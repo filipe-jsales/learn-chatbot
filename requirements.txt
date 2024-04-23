@@ -1,0 +1,8 @@
+langchainhub
+langchain
+fpdf
+reportlab
+nltk
+pypdf
+chromadb
+bs4
