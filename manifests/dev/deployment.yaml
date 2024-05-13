@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-webera-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-webera-dev
+  template:
+    metadata:
+      labels:
+        app: chat-webera-dev
+    spec:
+      initContainers:
+      - name: prepare-db
+        image: ghcr.io/wearewebera/chat.webera.cloud
+        command: ['python3', 'setup_db.py']
+        envFrom:
+          - configMapRef:
+              name: env-vars
+        volumeMounts:
+        - name: db-volume
+          mountPath: /app/vectorstores/db
+        - name: ui-config
+          mountPath: /app/.chainlit/config.toml
+          subPath: config.toml
+      containers:
+      - name: chat-webera
+        image: ghcr.io/wearewebera/chat.webera.cloud
+        command: [ "chainlit", "run", "rag.py", "-h" ]
+        envFrom:
+          - configMapRef:
+              name: env-vars
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: db-volume
+          mountPath: /app/vectorstores/db
+      imagePullSecrets:
+      - name: github-pull-secrets
+      volumes:
+      - name: db-volume
+        persistentVolumeClaim:
+          claimName: db-volume
+      - name: ui-config
+        configMap:
+          name: ui-config

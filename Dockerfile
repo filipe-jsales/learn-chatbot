@@ -1,16 +1,18 @@
-FROM ubuntu:latest
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install python3 python3-pip git -y
-RUN pip install \
-    langchain \
-    chainlit \
-    langchainhub \
-    gpt4all \
-    chromadb \
-    unstructured \
-    markdown 
+FROM webera/python
 
 WORKDIR /app
 
+COPY ./src/ .
 
-ENTRYPOINT [ "chainlit", "run", "-w", "rag.py"  ]
+RUN pip install langchain \
+                chainlit \
+                langchainhub \
+                chromadb \
+                pypdf \
+                bs4 \
+                tldextract \
+                PyPDF2 \
+                spacy \
+                transformers
+
+RUN python -m spacy download en_core_web_sm

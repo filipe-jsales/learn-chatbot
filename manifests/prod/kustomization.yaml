@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- deployment.yaml
+- service.yaml
+- pvc.yaml
+- configmap.yaml
+
+images:
+- name: ghcr.io/wearewebera/chat.webera.cloud
+  newName: ghcr.io/wearewebera/chat.webera.cloud
+  newTag: 80e645e33acf0395389b16e1f8d8819677bbaa59
